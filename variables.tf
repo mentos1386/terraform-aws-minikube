@@ -7,6 +7,11 @@ variable "cluster_name" {
   description = "Name of the AWS Minikube cluster - will be used to name all created resources"
 }
 
+variable "kubernetes_version" {
+  description = "Version of Kubernetes to be deployed"
+  default = "1.14.2"
+}
+
 variable "tags" {
   description = "Tags used for the AWS resources created by this template"
   type        = "map"

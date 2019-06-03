@@ -10,7 +10,7 @@ export DNS_NAME=${dns_name}
 export IP_ADDRESS=${ip_address}
 export CLUSTER_NAME=${cluster_name}
 export ADDONS="${addons}"
-export KUBERNETES_VERSION="1.14.2"
+export KUBERNETES_VERSION="${kubernetes_version}"
 
 # Set this only after setting the defaults
 set -o nounset
@@ -21,12 +21,15 @@ FULL_HOSTNAME="$(curl -s http://169.254.169.254/latest/meta-data/hostname)"
 # Make DNS lowercase
 DNS_NAME=$(echo "$DNS_NAME" | tr 'A-Z' 'a-z')
 
+export DEBIAN_FRONTEND=noninteractive
+
 # Install Docker
-apt update
-apt-get install apt-transport-https ca-certificates curl gnupg software-properties-common
+apt update -y
+apt install -y apt-transport-https ca-certificates curl gnupg software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-apt install docker-ce
+apt update -y
+apt install -y docker-ce
 systemctl start docker
 systemctl enable docker
 

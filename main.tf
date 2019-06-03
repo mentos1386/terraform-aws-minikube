@@ -106,10 +106,11 @@ data "template_file" "init_minikube" {
   template = "${file("${path.module}/scripts/init-aws-minikube.sh")}"
 
   vars {
-    dns_name      = "${var.cluster_name}.${var.hosted_zone}"
-    ip_address    = "${aws_eip.minikube.public_ip}"
-    cluster_name  = "${var.cluster_name}"
-    addons        = "${join(" ", var.addons)}"
+    dns_name           = "${var.cluster_name}.${var.hosted_zone}"
+    ip_address         = "${aws_eip.minikube.public_ip}"
+    cluster_name       = "${var.cluster_name}"
+    addons             = "${join(" ", var.addons)}"
+    kubernetes_version = "${var.kubernetes_version}"
   }
 }
 
