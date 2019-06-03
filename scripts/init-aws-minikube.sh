@@ -41,9 +41,9 @@ docker run --rm -v /etc/docker/ssl:/certs \
   -e SSL_IP=127.0.0.1,$IP_ADDRESS \
   -e SSL_EXPIRE="365" \
   paulczar/omgwtfssl
-cp $(pwd)/.docker/ca.pem /etc/docker/ssl/ca.pem
+chmod +r /etc/docker/ssl/key.pem
 ## Modify daemon.json to listen on 2376 and use key/certs
-cat <<EOF
+cat > /etc/docker/daemon.json <<EOF
 {
 "hosts": ["fd://", "tcp://0.0.0.0:2376"],
 "tlscacert": "/etc/docker/ssl/ca.pem",
@@ -51,7 +51,10 @@ cat <<EOF
 "tlskey": "/etc/docker/ssl/key.pem",
 "tlsverify": true
 }
-EOF > /etc/docker/daemon.json
+EOF
+# Remove hosts line from docker.service as it is now defined in daemon.json
+sed -i -e 's|-H fd://||g' /lib/systemd/system/docker.service
+systemctl daemon-reload
 systemctl restart docker
 
 # Add user to docker
@@ -69,10 +72,9 @@ export MINIKUBE_HOME=/home/ubuntu
 export CHANGE_MINIKUBE_NONE_USER=true
 export KUBECONFIG=/home/ubuntu/.kube/config
 minikube start \
-    -p $CLUSTER_NAME
     --vm-driver=none \
     --kubernetes-version=$KUBERNETES_VERSION \
-    --extra-config=apiserver.service-node-port-range=80-443
+    --extra-config=apiserver.service-node-port-range=80-30000
 
 # Load addons
 for ADDON in $ADDONS

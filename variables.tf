@@ -9,7 +9,7 @@ variable "cluster_name" {
 
 variable "kubernetes_version" {
   description = "Version of Kubernetes to be deployed"
-  default = "1.14.2"
+  default = "v1.14.2"
 }
 
 variable "tags" {
