@@ -13,7 +13,7 @@ variable "tags" {
 }
 
 variable "addons" {
-  description = "list of YAML files with Kubernetes addons which should be installed"
+  description = "list of minikube addons which should be installed"
   type        = "list"
 }
 

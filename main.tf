@@ -139,13 +139,12 @@ resource "aws_key_pair" "minikube_keypair" {
 
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners      = ["aws-marketplace"]
+  owners      = ["099720109477"]
 
   filter {
     name   = "name"
-    values = ["Ubuntu *"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
-
   filter {
     name   = "architecture"
     values = ["x86_64"]
