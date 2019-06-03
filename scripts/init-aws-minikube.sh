@@ -37,7 +37,7 @@ systemctl enable docker
 mkdir -p /etc/docker/ssl
 docker run --rm -v /etc/docker/ssl:/certs \
   -e SSL_SUBJECT=$DNS_NAME \
-  -e SSL_DNS=docker.local,$DNS_NAME,$FULL_HOSTNAME
+  -e SSL_DNS=docker.local,$DNS_NAME,$FULL_HOSTNAME \
   -e SSL_IP=127.0.0.1,$IP_ADDRESS \
   -e SSL_EXPIRE="365" \
   paulczar/omgwtfssl
