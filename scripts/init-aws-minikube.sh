@@ -34,20 +34,14 @@ systemctl start docker
 systemctl enable docker
 
 # Generate SSL Certs for docker
-## Certificate authority
- docker run --rm -v $(pwd)/.docker:/certs \
-    -e SSL_SUBJECT="$DNS_NAME" \
-    paulczar/omgwtfssl
+mkdir -p /etc/docker/ssl
+docker run --rm -v /etc/docker/ssl:/certs \
+  -e SSL_SUBJECT=$DNS_NAME \
+  -e SSL_DNS=docker.local,$DNS_NAME,$FULL_HOSTNAME
+  -e SSL_IP=127.0.0.1,$IP_ADDRESS \
+  -e SSL_EXPIRE="365" \
+  paulczar/omgwtfssl
 cp $(pwd)/.docker/ca.pem /etc/docker/ssl/ca.pem
-## Certificate and key
-docker run --rm -v /etc/docker/ssl:/server \
-    -e SSL_SUBJECT=$DNS_NAME \
-    -e SSL_DNS=docker.local,$DNS_NAME,$FULL_HOSTNAME
-    -e SSL_IP=127.0.0.1,$IP_ADDRESS \
-    -e SSL_EXPIRE="365" \
-    -e SSL_KEY=/server/key.pem \
-    -e SSL_CERT=/server/cert.pem \
-    paulczar/omgwtfssl
 ## Modify daemon.json to listen on 2376 and use key/certs
 cat <<EOF
 {
