@@ -4,7 +4,7 @@
 
 output "ssh_user" {
     description = "SSH user to download kubeconfig file"
-    value = "centos"
+    value = "ubuntu"
 }
 
 output "public_ip" {
@@ -17,12 +17,12 @@ output "dns" {
     value = "${aws_route53_record.minikube.fqdn}"
 }
 
-output "kubeconfig_dns" {
-    description = "Path to the the kubeconfig file using DNS address"
-    value = "/home/centos/kubeconfig"
+output "kubeconfig" {
+    description = "Path to the the kubeconfig file"
+    value = "/home/ubuntu/.kube/config"
 }
 
-output "kubeconfig_ip" {
-    description = "Path to the kubeconfig file using IP address"
-    value = "/home/centos/kubeconfig_ip"
+output "docker_certs" {
+    description = "Path to the the docker cert files"
+    value = "/etc/docker/ssl/*.pem"
 }

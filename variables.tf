@@ -41,6 +41,6 @@ variable "hosted_zone_private" {
 }
 
 variable "ami_image_id" {
-  description = "ID of the AMI image which should be used. If empty, the latest CentOS 7 image will be used. See README.md for AMI image requirements."
+  description = "ID of the AMI image which should be used. If empty, the latest Ubuntu image will be used. See README.md for AMI image requirements."
   default     = ""
 }

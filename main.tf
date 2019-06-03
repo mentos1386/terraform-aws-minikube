@@ -8,14 +8,6 @@ provider "aws" {
 }
 
 #####
-# Generate kubeadm token
-#####
-
-module "kubeadm-token" {
-  source = "scholzj/kubeadm-token/random"
-}
-
-#####
 # Security Group
 #####
 
@@ -39,6 +31,13 @@ resource "aws_security_group" "minikube" {
   ingress {
     from_port   = 6443
     to_port     = 6443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 2376
+    to_port     = 2376
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -107,7 +106,6 @@ data "template_file" "init_minikube" {
   template = "${file("${path.module}/scripts/init-aws-minikube.sh")}"
 
   vars {
-    kubeadm_token = "${module.kubeadm-token.token}"
     dns_name      = "${var.cluster_name}.${var.hosted_zone}"
     ip_address    = "${aws_eip.minikube.public_ip}"
     cluster_name  = "${var.cluster_name}"
@@ -115,23 +113,9 @@ data "template_file" "init_minikube" {
   }
 }
 
-data "template_file" "cloud-init-config" {
-  template = "${file("${path.module}/scripts/cloud-init-config.yaml")}"
-
-  vars {
-    calico_yaml = "${base64gzip("${file("${path.module}/scripts/calico.yaml")}")}"
-  }
-}
-
 data "template_cloudinit_config" "minikube_cloud_init" {
   gzip          = true
   base64_encode = true
-
-  part {
-    filename     = "cloud-init-config.yaml"
-    content_type = "text/cloud-config"
-    content      = "${data.template_file.cloud-init-config.rendered}"
-  }
 
   part {
     filename     = "init-aws-minikube.sh"
@@ -153,13 +137,13 @@ resource "aws_key_pair" "minikube_keypair" {
 # EC2 instance
 #####
 
-data "aws_ami" "centos7" {
+data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["aws-marketplace"]
 
   filter {
-    name   = "product-code"
-    values = ["aw0evgkw8e5c1q413zgy5pjce"]
+    name   = "name"
+    values = ["Ubuntu *"]
   }
 
   filter {
@@ -181,7 +165,7 @@ resource "aws_instance" "minikube" {
   # Instance type - any of the c4 should do for now
   instance_type = "${var.aws_instance_type}"
 
-  ami = "${length(var.ami_image_id) > 0 ? var.ami_image_id : data.aws_ami.centos7.id}"
+  ami = "${length(var.ami_image_id) > 0 ? var.ami_image_id : data.aws_ami.ubuntu.id}"
 
   key_name = "${aws_key_pair.minikube_keypair.key_name}"
 
@@ -201,7 +185,7 @@ resource "aws_instance" "minikube" {
 
   root_block_device {
     volume_type           = "gp2"
-    volume_size           = "50"
+    volume_size           = "150"
     delete_on_termination = true
   }
 
