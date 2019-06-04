@@ -28,6 +28,7 @@ resource "aws_security_group" "minikube" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # kubectl API proxy
   ingress {
     from_port   = 6443
     to_port     = 6443
@@ -35,6 +36,7 @@ resource "aws_security_group" "minikube" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # docker socket
   ingress {
     from_port   = 2376
     to_port     = 2376

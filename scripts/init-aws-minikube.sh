@@ -60,6 +60,9 @@ systemctl restart docker
 # Add user to docker
 usermod -aG docker ubuntu
 
+# Install kubectl
+snap install kubectl --classic
+
 # Install Minikube
 curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 chmod +x minikube
@@ -77,9 +80,29 @@ minikube start \
     --extra-config=apiserver.service-node-port-range=80-30000
 
 chown -R ubuntu:ubuntu /home/ubuntu/.kube
+chown -R ubuntu:ubuntu /home/ubuntu/.minikube
 
 # Load addons
 for ADDON in $ADDONS
 do
   minikube addons enable $ADDON
 done
+
+# Create kubectl proxy that forwards API calls to minikube cluster API server
+cat > /etc/systemd/system/kubectl-proxy.service <<EOF
+[Unit]
+Description=Kubectl Proxy
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu
+ExecStart=/snap/bin/kubectl proxy --address=0.0.0.0 --accept-hosts=".*" --port 6443
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl enable kubectl-proxy
+systemctl start kubectl-proxy
