@@ -17,6 +17,11 @@ output "dns" {
     value = "${aws_route53_record.minikube.fqdn}"
 }
 
+output "instance" {
+    description = "Minikube EC2 Instance"
+    value = "${aws_instance.minikube.id}"
+}
+
 output "kubeconfig" {
     description = "Path to the the kubeconfig file"
     value = "/home/ubuntu/.kube/config"
