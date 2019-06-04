@@ -76,6 +76,8 @@ minikube start \
     --kubernetes-version=$KUBERNETES_VERSION \
     --extra-config=apiserver.service-node-port-range=80-30000
 
+chown -R ubuntu:ubuntu /home/ubuntu/.kube
+
 # Load addons
 for ADDON in $ADDONS
 do
