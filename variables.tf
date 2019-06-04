@@ -17,6 +17,12 @@ variable "tags" {
   type        = "map"
 }
 
+variable "secirity_groups" {
+  description = "Additional security groups to be attached to instance"
+  type        = "list"
+}
+
+
 variable "addons" {
   description = "list of minikube addons which should be installed"
   type        = "list"
