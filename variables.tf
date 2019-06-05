@@ -17,7 +17,7 @@ variable "tags" {
   type        = "map"
 }
 
-variable "secirity_groups" {
+variable "security_groups" {
   description = "Additional security groups to be attached to instance"
   type        = "list"
 }
