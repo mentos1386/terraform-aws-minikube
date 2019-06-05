@@ -127,7 +127,7 @@ resource "aws_instance" "minikube" {
 
   associate_public_ip_address = false
 
-  vpc_security_group_ids = "${concat(aws_security_group.minikube.id, "${var.secirity_groups}")}"
+  vpc_security_group_ids = ["${concat(aws_security_group.minikube.id, "${var.secirity_groups}")}"]
 
   user_data = "${data.template_cloudinit_config.minikube_cloud_init.rendered}"
 
